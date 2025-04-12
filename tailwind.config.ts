@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				cosmic: {
+					dark: '#0B0E18',
+					blue: '#1E3A8A',
+					purple: '#4C1D95',
+					indigo: '#312E81',
+					pink: '#831843',
+					glow: '#8B5CF6'
 				}
 			},
 			borderRadius: {
@@ -84,11 +93,33 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'orbit': {
+					'0%': { transform: 'rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg)' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-20px)' }
+				},
+				'pulse-glow': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.6' }
+				},
+				'twinkle': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.3' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'orbit-slow': 'orbit 30s linear infinite',
+				'orbit-medium': 'orbit 20s linear infinite',
+				'orbit-fast': 'orbit 10s linear infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
+				'twinkle': 'twinkle 3s ease-in-out infinite'
 			}
 		}
 	},
