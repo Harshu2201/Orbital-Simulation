@@ -3,7 +3,6 @@ export const PLANET_DATA = [
   {
     name: "Mercury",
     size: 0.5,
-    textureMap: "/textures/mercury.jpg",
     position: [4, 0, 0] as [number, number, number],
     rotationSpeed: 0.004,
     description: "The smallest and innermost planet in the Solar System.",
@@ -17,7 +16,6 @@ export const PLANET_DATA = [
   {
     name: "Venus",
     size: 0.9,
-    textureMap: "/textures/venus.jpg",
     position: [7, 0, 0] as [number, number, number],
     rotationSpeed: 0.002,
     description: "The hottest planet with a toxic atmosphere of carbon dioxide.",
@@ -31,7 +29,6 @@ export const PLANET_DATA = [
   {
     name: "Earth",
     size: 1,
-    textureMap: "/textures/earth.jpg",
     position: [10, 0, 0] as [number, number, number],
     rotationSpeed: 0.01,
     description: "Our home planet, the only known planet with life.",
@@ -45,7 +42,6 @@ export const PLANET_DATA = [
   {
     name: "Mars",
     size: 0.7,
-    textureMap: "/textures/mars.jpg",
     position: [13, 0, 0] as [number, number, number],
     rotationSpeed: 0.008,
     description: "Known as the Red Planet due to iron oxide on its surface.",
@@ -59,7 +55,6 @@ export const PLANET_DATA = [
   {
     name: "Jupiter",
     size: 2.5,
-    textureMap: "/textures/jupiter.jpg",
     position: [18, 0, 0] as [number, number, number],
     rotationSpeed: 0.04,
     description: "The largest planet in our solar system, a gas giant.",
@@ -73,10 +68,7 @@ export const PLANET_DATA = [
   {
     name: "Saturn",
     size: 2.2,
-    textureMap: "/textures/saturn.jpg",
     position: [23, 0, 0] as [number, number, number],
-    hasRings: true,
-    ringTexture: "/textures/saturn_rings.png",
     rotationSpeed: 0.03,
     description: "Famous for its beautiful ring system, Saturn is a gas giant.",
     facts: [
@@ -89,10 +81,7 @@ export const PLANET_DATA = [
   {
     name: "Uranus",
     size: 1.8,
-    textureMap: "/textures/uranus.jpg",
     position: [28, 0, 0] as [number, number, number],
-    hasRings: true,
-    ringTexture: "/textures/uranus_rings.jpg",
     rotationSpeed: 0.02,
     description: "An ice giant that rotates on its side.",
     facts: [
@@ -105,7 +94,6 @@ export const PLANET_DATA = [
   {
     name: "Neptune",
     size: 1.7,
-    textureMap: "/textures/neptune.jpg",
     position: [32, 0, 0] as [number, number, number],
     rotationSpeed: 0.025,
     description: "The windiest planet, with gusts up to 2,100 km/h.",

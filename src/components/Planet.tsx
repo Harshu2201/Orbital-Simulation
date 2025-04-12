@@ -1,21 +1,14 @@
 
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useTexture, Html } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import { Mesh } from 'three';
-import { cn } from '@/lib/utils';
 
 interface PlanetProps {
   name: string;
   size: number;
-  textureMap: string;
+  position: [number, number, number]; // Explicitly typed as tuple
   rotationSpeed?: number;
-  orbitClass?: string;
-  orbitPosition?: number;
-  hasRings?: boolean;
-  ringTexture?: string;
-  className?: string;
-  position?: [number, number, number]; // Explicitly typed as tuple
   description?: string;
   facts?: string[];
   showInfo?: boolean;
@@ -25,34 +18,19 @@ interface PlanetProps {
 const Planet: React.FC<PlanetProps> = ({
   name,
   size,
-  textureMap,
+  position,
   rotationSpeed = 0.005,
-  orbitClass,
-  orbitPosition = 0,
-  hasRings = false,
-  ringTexture,
-  className,
-  position = [0, 0, 0],
   description,
   facts,
   showInfo = false,
   onClick
 }) => {
   const planetRef = useRef<Mesh>(null);
-  const ringsRef = useRef<Mesh>(null);
-  
-  // Load the texture map
-  const texture = useTexture(textureMap);
-  const ringMap = hasRings && ringTexture ? useTexture(ringTexture) : null;
   
   // Animate the planet rotation
   useFrame(() => {
     if (planetRef.current) {
       planetRef.current.rotation.y += rotationSpeed;
-    }
-    
-    if (ringsRef.current) {
-      ringsRef.current.rotation.x = 0.5; // Tilt the rings
     }
   });
   
@@ -60,8 +38,8 @@ const Planet: React.FC<PlanetProps> = ({
     <group position={position} onClick={onClick}>
       {/* Planet Sphere */}
       <mesh ref={planetRef}>
-        <sphereGeometry args={[size, 64, 64]} />
-        <meshStandardMaterial map={texture} />
+        <sphereGeometry args={[size, 32, 32]} />
+        <meshStandardMaterial color={`hsl(${Math.random() * 360}, 50%, 50%)`} />
         
         {/* Info card that appears when hovering or clicking */}
         {showInfo && (
@@ -84,19 +62,6 @@ const Planet: React.FC<PlanetProps> = ({
           </Html>
         )}
       </mesh>
-      
-      {/* Rings for planets that have them */}
-      {hasRings && ringMap && (
-        <mesh ref={ringsRef}>
-          <ringGeometry args={[size * 1.4, size * 2, 64]} />
-          <meshStandardMaterial 
-            map={ringMap} 
-            transparent={true} 
-            opacity={0.8} 
-            side={2} // Render both sides
-          />
-        </mesh>
-      )}
     </group>
   );
 };

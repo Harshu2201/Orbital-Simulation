@@ -24,7 +24,7 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
       <pointLight position={[0, 0, 0]} intensity={2} color="#FDB813" />
       
       <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[2.5, 64, 64]} />
+        <sphereGeometry args={[2.5, 32, 32]} />
         <meshBasicMaterial color="#FDB813" />
         <Html position={[0, 3, 0]} distanceFactor={10}>
           <div className="bg-black/50 backdrop-blur-sm p-1 rounded whitespace-nowrap">
@@ -36,8 +36,12 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
       {PLANET_DATA.map((planet) => (
         <Planet
           key={planet.name}
-          {...planet}
+          name={planet.name}
+          size={planet.size}
+          position={planet.position}
           rotationSpeed={planet.rotationSpeed * speed}
+          description={planet.description}
+          facts={planet.facts}
           showInfo={activePlanet === planet.name}
           onClick={() => setActivePlanet(planet.name)}
         />
