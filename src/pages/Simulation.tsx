@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import StarBackground from '@/components/StarBackground';
 import Navbar from '@/components/Navbar';
 import SolarSystem from '@/components/SolarSystem';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Info, Settings, Maximize, Minimize } from 'lucide-react';
 
 const Simulation = () => {
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -36,7 +36,7 @@ const Simulation = () => {
           <div className="md:w-3/4">
             <Card className="glass-card border-white/10 p-4 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold">Solar System Simulation</h1>
+                <h1 className="text-2xl font-bold">3D Solar System Simulation</h1>
                 <Button 
                   variant="ghost" 
                   size="icon"
@@ -47,7 +47,7 @@ const Simulation = () => {
                 </Button>
               </div>
               
-              <div className="h-[500px] relative rounded-lg overflow-hidden">
+              <div className="h-[600px] relative rounded-lg overflow-hidden">
                 <SolarSystem />
               </div>
             </Card>
@@ -63,20 +63,23 @@ const Simulation = () => {
                 <TabsContent value="overview" className="text-gray-300">
                   <h2 className="text-xl font-bold mb-3">About This Simulation</h2>
                   <p className="mb-4">
-                    This interactive model shows the planets of our solar system orbiting around the Sun. 
-                    The simulation is not to scale—if it were, you wouldn't be able to see the planets!
+                    This interactive 3D model shows the planets of our solar system. You can rotate, zoom, and explore
+                    each planet in detail. The simulation is not to scale—if it were, you wouldn't be able to see the planets!
                   </p>
                   <p>
-                    You can control the simulation speed using the controls above the simulation. 
-                    Explore and enjoy the cosmic dance of our planetary neighbors!
+                    Click on any planet to see more information about it. Use your mouse to rotate the view and scroll to zoom in and out.
+                    Enjoy exploring our cosmic neighborhood!
                   </p>
                 </TabsContent>
                 
                 <TabsContent value="controls" className="text-gray-300">
                   <h2 className="text-xl font-bold mb-3">Simulation Controls</h2>
                   <ul className="list-disc list-inside space-y-2">
-                    <li><strong>Play/Pause:</strong> Start or stop the orbital motion</li>
-                    <li><strong>Speed Control:</strong> Adjust how fast the planets orbit</li>
+                    <li><strong>Mouse Drag:</strong> Rotate the view</li>
+                    <li><strong>Scroll:</strong> Zoom in/out</li>
+                    <li><strong>Click on Planet:</strong> View planet details</li>
+                    <li><strong>Play/Pause:</strong> Start or stop the planetary rotation</li>
+                    <li><strong>Speed Control:</strong> Adjust how fast the planets rotate</li>
                     <li><strong>Fullscreen:</strong> Expand the simulation to fill your screen</li>
                   </ul>
                 </TabsContent>
@@ -85,10 +88,12 @@ const Simulation = () => {
                   <h2 className="text-xl font-bold mb-3">Solar System Facts</h2>
                   <ul className="list-disc list-inside space-y-2">
                     <li>The Sun makes up 99.86% of the mass in the solar system</li>
-                    <li>A day on Venus is longer than a year on Venus</li>
-                    <li>Jupiter has the shortest day of all the planets</li>
-                    <li>The Great Red Spot on Jupiter is a storm that has lasted over 300 years</li>
-                    <li>If Saturn were placed in water, it would float</li>
+                    <li>Light from the Sun takes about 8 minutes to reach Earth</li>
+                    <li>The solar system formed about 4.6 billion years ago</li>
+                    <li>There are eight recognized planets in our solar system</li>
+                    <li>Pluto was reclassified as a dwarf planet in 2006</li>
+                    <li>The solar system is located in the Orion Arm of the Milky Way galaxy</li>
+                    <li>The Kuiper Belt and Oort Cloud contain countless icy objects beyond Neptune</li>
                   </ul>
                 </TabsContent>
               </Tabs>
@@ -100,33 +105,33 @@ const Simulation = () => {
             <Card className="glass-card border-white/10 p-6 mb-6">
               <div className="flex items-center mb-4">
                 <Info className="h-5 w-5 mr-2 text-cosmic-glow" />
-                <h2 className="text-xl font-bold">Planet Info</h2>
+                <h2 className="text-xl font-bold">Did You Know?</h2>
               </div>
               
               <div className="space-y-4">
                 <div className="border-b border-white/10 pb-3">
-                  <h3 className="font-medium mb-1">Mercury</h3>
-                  <p className="text-sm text-gray-400">The smallest and innermost planet in the Solar System.</p>
+                  <h3 className="font-medium mb-1">Solar Wind</h3>
+                  <p className="text-sm text-gray-400">The solar wind is a stream of charged particles released from the Sun that affects all planets in our system.</p>
                 </div>
                 
                 <div className="border-b border-white/10 pb-3">
-                  <h3 className="font-medium mb-1">Venus</h3>
-                  <p className="text-sm text-gray-400">The hottest planet with a toxic atmosphere of carbon dioxide.</p>
+                  <h3 className="font-medium mb-1">Earth's Uniqueness</h3>
+                  <p className="text-sm text-gray-400">Earth is the only planet not named after a god or goddess from Greek or Roman mythology.</p>
                 </div>
                 
                 <div className="border-b border-white/10 pb-3">
-                  <h3 className="font-medium mb-1">Earth</h3>
-                  <p className="text-sm text-gray-400">Our home planet, the only known planet with life.</p>
+                  <h3 className="font-medium mb-1">Jupiter's Protection</h3>
+                  <p className="text-sm text-gray-400">Jupiter's massive gravity acts as a cosmic shield, protecting Earth from many asteroid impacts.</p>
                 </div>
                 
                 <div className="border-b border-white/10 pb-3">
-                  <h3 className="font-medium mb-1">Mars</h3>
-                  <p className="text-sm text-gray-400">Known as the Red Planet due to iron oxide on its surface.</p>
+                  <h3 className="font-medium mb-1">Venus's Day</h3>
+                  <p className="text-sm text-gray-400">A day on Venus (243 Earth days) is longer than its year (225 Earth days).</p>
                 </div>
                 
                 <div>
-                  <h3 className="font-medium mb-1">Jupiter</h3>
-                  <p className="text-sm text-gray-400">The largest planet in our solar system, a gas giant.</p>
+                  <h3 className="font-medium mb-1">Saturn's Density</h3>
+                  <p className="text-sm text-gray-400">Saturn is so light that it would float in water if there were an ocean large enough to hold it.</p>
                 </div>
               </div>
             </Card>
@@ -138,16 +143,17 @@ const Simulation = () => {
               </div>
               
               <div className="space-y-4 text-sm text-gray-300">
-                <p>Simulation settings coming soon:</p>
+                <p>Simulation settings:</p>
                 <ul className="list-disc list-inside text-gray-400">
-                  <li>Gravity adjustments</li>
-                  <li>Planet customization</li>
-                  <li>Orbital path visualization</li>
-                  <li>Realistic scaling option</li>
+                  <li>Click any planet to focus</li>
+                  <li>Rotate view with mouse drag</li>
+                  <li>Zoom with scroll wheel</li>
+                  <li>Adjust rotation speed with slider</li>
+                  <li>Toggle audio with sound button</li>
                 </ul>
                 
                 <p className="mt-4 text-gray-400 italic">
-                  These features will be included in our next update!
+                  Try the fullscreen mode for an immersive experience!
                 </p>
               </div>
             </Card>
