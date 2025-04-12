@@ -15,11 +15,11 @@ interface PlanetProps {
   hasRings?: boolean;
   ringTexture?: string;
   className?: string;
-  position?: [number, number, number];
+  position?: [number, number, number]; // Explicitly typed as tuple
   description?: string;
   facts?: string[];
   showInfo?: boolean;
-  onClick?: () => void; // Add the onClick prop to the interface
+  onClick?: () => void;
 }
 
 const Planet: React.FC<PlanetProps> = ({
@@ -36,7 +36,7 @@ const Planet: React.FC<PlanetProps> = ({
   description,
   facts,
   showInfo = false,
-  onClick  // Use the onClick prop
+  onClick
 }) => {
   const planetRef = useRef<Mesh>(null);
   const ringsRef = useRef<Mesh>(null);

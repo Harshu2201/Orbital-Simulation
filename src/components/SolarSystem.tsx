@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, Suspense } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Stars, Html, useTexture } from '@react-three/drei';
@@ -9,14 +8,14 @@ import { Card } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Play, Pause, FastForward, Rewind, Info } from 'lucide-react';
 import { useAudio } from '@/contexts/AudioContext';
-import { cn } from '@/lib/utils'; // Import cn utility
+import { cn } from '@/lib/utils';
 
 const PLANET_DATA = [
   {
     name: "Mercury",
     size: 0.5,
     textureMap: "/textures/mercury.jpg",
-    position: [4, 0, 0],
+    position: [4, 0, 0] as [number, number, number],
     rotationSpeed: 0.004,
     description: "The smallest and innermost planet in the Solar System.",
     facts: [
@@ -30,7 +29,7 @@ const PLANET_DATA = [
     name: "Venus",
     size: 0.9,
     textureMap: "/textures/venus.jpg",
-    position: [7, 0, 0],
+    position: [7, 0, 0] as [number, number, number],
     rotationSpeed: 0.002,
     description: "The hottest planet with a toxic atmosphere of carbon dioxide.",
     facts: [
@@ -44,7 +43,7 @@ const PLANET_DATA = [
     name: "Earth",
     size: 1,
     textureMap: "/textures/earth.jpg",
-    position: [10, 0, 0],
+    position: [10, 0, 0] as [number, number, number],
     rotationSpeed: 0.01,
     description: "Our home planet, the only known planet with life.",
     facts: [
@@ -58,7 +57,7 @@ const PLANET_DATA = [
     name: "Mars",
     size: 0.7,
     textureMap: "/textures/mars.jpg",
-    position: [13, 0, 0],
+    position: [13, 0, 0] as [number, number, number],
     rotationSpeed: 0.008,
     description: "Known as the Red Planet due to iron oxide on its surface.",
     facts: [
@@ -72,7 +71,7 @@ const PLANET_DATA = [
     name: "Jupiter",
     size: 2.5,
     textureMap: "/textures/jupiter.jpg",
-    position: [18, 0, 0],
+    position: [18, 0, 0] as [number, number, number],
     rotationSpeed: 0.04,
     description: "The largest planet in our solar system, a gas giant.",
     facts: [
@@ -86,7 +85,7 @@ const PLANET_DATA = [
     name: "Saturn",
     size: 2.2,
     textureMap: "/textures/saturn.jpg",
-    position: [23, 0, 0],
+    position: [23, 0, 0] as [number, number, number],
     hasRings: true,
     ringTexture: "/textures/saturn_rings.png",
     rotationSpeed: 0.03,
@@ -102,7 +101,7 @@ const PLANET_DATA = [
     name: "Uranus",
     size: 1.8,
     textureMap: "/textures/uranus.jpg",
-    position: [28, 0, 0],
+    position: [28, 0, 0] as [number, number, number],
     hasRings: true,
     ringTexture: "/textures/uranus_rings.jpg",
     rotationSpeed: 0.02,
@@ -118,7 +117,7 @@ const PLANET_DATA = [
     name: "Neptune",
     size: 1.7,
     textureMap: "/textures/neptune.jpg",
-    position: [32, 0, 0],
+    position: [32, 0, 0] as [number, number, number],
     rotationSpeed: 0.025,
     description: "The windiest planet, with gusts up to 2,100 km/h.",
     facts: [
@@ -130,11 +129,9 @@ const PLANET_DATA = [
   }
 ];
 
-// Scene setup component
 const SceneSetup = ({ activePlanet, setActivePlanet, speed }) => {
   const { camera } = useThree();
   
-  // Set initial camera position
   React.useEffect(() => {
     camera.position.set(0, 10, 25);
   }, [camera]);
@@ -144,7 +141,6 @@ const SceneSetup = ({ activePlanet, setActivePlanet, speed }) => {
       <ambientLight intensity={0.3} />
       <pointLight position={[0, 0, 0]} intensity={2} color="#FDB813" />
       
-      {/* Sun */}
       <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[2.5, 64, 64]} />
         <meshBasicMaterial color="#FDB813" />
@@ -155,7 +151,6 @@ const SceneSetup = ({ activePlanet, setActivePlanet, speed }) => {
         </Html>
       </mesh>
       
-      {/* Planets */}
       {PLANET_DATA.map((planet, index) => (
         <Planet
           key={planet.name}
@@ -166,7 +161,6 @@ const SceneSetup = ({ activePlanet, setActivePlanet, speed }) => {
         />
       ))}
       
-      {/* Orbit controls for camera */}
       <OrbitControls 
         enableZoom={true}
         enablePan={true}
@@ -176,7 +170,6 @@ const SceneSetup = ({ activePlanet, setActivePlanet, speed }) => {
         rotateSpeed={0.5}
       />
       
-      {/* Stars background */}
       <Stars radius={100} depth={50} count={5000} factor={4} fade speed={1} />
     </>
   );
@@ -186,16 +179,13 @@ const SolarSystem: React.FC = () => {
   const [speed, setSpeed] = useState(1);
   const [isPlaying, setIsPlaying] = useState(true);
   const [activePlanet, setActivePlanet] = useState<string | null>(null);
-  const { toggleAudio, isPlaying: isAudioPlaying } = useAudio(); // Rename to match the context
+  const { toggleAudio, isPlaying: isAudioPlaying } = useAudio();
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
-    // For animations that are controlled by useFrame
     if (isPlaying) {
-      // Pause all animations
       setSpeed(0);
     } else {
-      // Resume animations
       setSpeed(1);
     }
   };
@@ -216,7 +206,6 @@ const SolarSystem: React.FC = () => {
 
   return (
     <div className="relative w-full h-full flex flex-col">
-      {/* Control panel */}
       <div className="glass-card py-3 px-6 rounded-lg mb-4 flex items-center gap-4">
         <Button
           variant="outline" 
@@ -284,12 +273,10 @@ const SolarSystem: React.FC = () => {
         </Button>
       </div>
 
-      {/* Instructions */}
       <div className="glass-card p-2 rounded-lg mb-4 text-center text-xs text-gray-300">
         <p>Use mouse to rotate. Scroll to zoom in/out. Click on a planet to see details.</p>
       </div>
 
-      {/* Planet selector */}
       <div className="glass-card p-2 rounded-lg mb-4 overflow-x-auto whitespace-nowrap">
         <div className="flex space-x-2">
           <Button
@@ -321,7 +308,6 @@ const SolarSystem: React.FC = () => {
         </div>
       </div>
 
-      {/* Solar system canvas */}
       <div className="flex-1 relative">
         <div className="absolute inset-0 z-10">
           <Suspense fallback={<div className="flex h-full items-center justify-center">Loading 3D models...</div>}>
@@ -336,7 +322,6 @@ const SolarSystem: React.FC = () => {
         </div>
       </div>
       
-      {/* Selected Planet Detail Card */}
       {activePlanet && (
         <Collapsible defaultOpen={true} className="absolute bottom-4 right-4 max-w-xs">
           <CollapsibleTrigger asChild>
