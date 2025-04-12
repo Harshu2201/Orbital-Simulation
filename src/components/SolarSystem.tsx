@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Play, Pause, FastForward, Rewind, Info } from 'lucide-react';
 import { useAudio } from '@/contexts/AudioContext';
+import { cn } from '@/lib/utils'; // Import cn utility
 
 const PLANET_DATA = [
   {
@@ -185,7 +186,7 @@ const SolarSystem: React.FC = () => {
   const [speed, setSpeed] = useState(1);
   const [isPlaying, setIsPlaying] = useState(true);
   const [activePlanet, setActivePlanet] = useState<string | null>(null);
-  const { toggleAudio, isAudioPlaying } = useAudio();
+  const { toggleAudio, isPlaying: isAudioPlaying } = useAudio(); // Rename to match the context
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);

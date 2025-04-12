@@ -19,6 +19,7 @@ interface PlanetProps {
   description?: string;
   facts?: string[];
   showInfo?: boolean;
+  onClick?: () => void; // Add the onClick prop to the interface
 }
 
 const Planet: React.FC<PlanetProps> = ({
@@ -34,7 +35,8 @@ const Planet: React.FC<PlanetProps> = ({
   position = [0, 0, 0],
   description,
   facts,
-  showInfo = false
+  showInfo = false,
+  onClick  // Use the onClick prop
 }) => {
   const planetRef = useRef<Mesh>(null);
   const ringsRef = useRef<Mesh>(null);
@@ -55,7 +57,7 @@ const Planet: React.FC<PlanetProps> = ({
   });
   
   return (
-    <group position={position}>
+    <group position={position} onClick={onClick}>
       {/* Planet Sphere */}
       <mesh ref={planetRef}>
         <sphereGeometry args={[size, 64, 64]} />

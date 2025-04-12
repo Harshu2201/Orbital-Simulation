@@ -11,12 +11,13 @@ import Learn from "./pages/Learn";
 import NotFound from "./pages/NotFound";
 import "./App.css";
 
+// Create a client
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AudioProvider>
+    <AudioProvider>
+      <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -27,8 +28,8 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </AudioProvider>
-    </TooltipProvider>
+      </TooltipProvider>
+    </AudioProvider>
   </QueryClientProvider>
 );
 
