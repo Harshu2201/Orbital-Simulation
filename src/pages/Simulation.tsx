@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import StarBackground from '@/components/StarBackground';
 import Navbar from '@/components/Navbar';
 import SolarSystem from '@/components/SolarSystem';
+import AstrophysicsInfo from '@/components/AstrophysicsInfo';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,7 @@ const Simulation = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <StarBackground starCount={500} />
+      <StarBackground starCount={500} shootingStarCount={8} />
       <Navbar />
       
       <main className="container mx-auto pt-24 pb-12 px-4">
@@ -51,6 +52,8 @@ const Simulation = () => {
                 <SolarSystem />
               </div>
             </Card>
+            
+            <AstrophysicsInfo className="mb-6" />
             
             <Card className="glass-card border-white/10 p-6">
               <Tabs defaultValue="overview">
