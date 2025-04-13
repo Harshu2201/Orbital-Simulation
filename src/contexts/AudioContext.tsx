@@ -1,11 +1,13 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
+// Define the types for our context
 interface AudioContextType {
   isPlaying: boolean;
   volume: number;
   toggleAudio: () => void;
   setVolume: (volume: number) => void;
+  playClickSound: () => void;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -22,19 +24,26 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(0.4);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const clickSoundRef = useRef<HTMLAudioElement | null>(null);
   const [audioLoaded, setAudioLoaded] = useState(false);
   const [audioAttempted, setAudioAttempted] = useState(false);
 
+  // Set up audio elements
   useEffect(() => {
-    // Create audio element
-    const audio = new Audio('/space-cinematic-epic.mp3');
-    audio.loop = true;
-    audio.volume = volume;
-    audio.preload = 'auto';
+    // Using a CDN-hosted audio file for reliability
+    const backgroundMusic = new Audio('https://cdn.pixabay.com/download/audio/2023/06/20/audio_55a1bda15d.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = volume;
+    backgroundMusic.preload = 'auto';
     
-    // Add a better error handling and logging
+    // Create click sound element
+    const clickSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_1001f3697a.mp3');
+    clickSound.volume = volume * 1.2; // Slightly louder than background
+    clickSound.preload = 'auto';
+    
+    // Add better error handling and logging
     const handleCanPlayThrough = () => {
-      console.log('Audio loaded successfully and ready to play');
+      console.log('Background audio loaded successfully and ready to play');
       setAudioLoaded(true);
     };
     
@@ -43,15 +52,16 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Try fallback audio if primary source fails
       if (!audioAttempted) {
         console.log('Attempting to load fallback audio...');
-        audio.src = '/ambient-space.mp3';
+        backgroundMusic.src = 'https://assets.mixkit.co/music/preview/mixkit-deep-space-74.mp3';
         setAudioAttempted(true);
       }
     };
     
-    audio.addEventListener('canplaythrough', handleCanPlayThrough);
-    audio.addEventListener('error', handleError);
+    backgroundMusic.addEventListener('canplaythrough', handleCanPlayThrough);
+    backgroundMusic.addEventListener('error', handleError);
     
-    audioRef.current = audio;
+    audioRef.current = backgroundMusic;
+    clickSoundRef.current = clickSound;
 
     // Cleanup on unmount
     return () => {
@@ -62,8 +72,26 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         audioRef.current.src = '';
         audioRef.current = null;
       }
+      if (clickSoundRef.current) {
+        clickSoundRef.current.src = '';
+        clickSoundRef.current = null;
+      }
     };
   }, [volume, audioAttempted]);
+
+  // Play click sound function
+  const playClickSound = () => {
+    if (!clickSoundRef.current) return;
+    
+    // Clone the audio to allow multiple overlapping sounds
+    const clickSoundClone = clickSoundRef.current.cloneNode() as HTMLAudioElement;
+    clickSoundClone.volume = volume;
+    
+    clickSoundClone.play()
+      .catch(error => {
+        console.error("Click sound playback prevented by browser:", error);
+      });
+  };
 
   const toggleAudio = () => {
     if (!audioRef.current) {
@@ -86,7 +114,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           })
           .catch(error => {
             console.error("Audio playback prevented by browser:", error);
-            // Add user-friendly notification that browser blocked autoplay
           });
       }
     }
@@ -96,11 +123,20 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
+    if (clickSoundRef.current) {
+      clickSoundRef.current.volume = newVolume * 1.2; // Click sound slightly louder
+    }
     setVolumeState(newVolume);
   };
 
   return (
-    <AudioContext.Provider value={{ isPlaying, volume, toggleAudio, setVolume }}>
+    <AudioContext.Provider value={{ 
+      isPlaying, 
+      volume, 
+      toggleAudio, 
+      setVolume,
+      playClickSound 
+    }}>
       {children}
     </AudioContext.Provider>
   );

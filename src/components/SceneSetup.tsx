@@ -5,6 +5,7 @@ import { OrbitControls, Stars, Html } from '@react-three/drei';
 import Planet from './Planet';
 import { PLANET_DATA } from '@/data/planetData';
 import * as THREE from 'three';
+import { useAudio } from '@/contexts/AudioContext';
 
 interface SceneSetupProps {
   activePlanet: string | null;
@@ -18,6 +19,8 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
   const sunRef = useRef<THREE.Mesh>(null);
   const sunGlowRef = useRef<THREE.Mesh>(null);
   const orbitLinesRef = useRef<THREE.Object3D>(null);
+  const sunFlareRef = useRef<THREE.Mesh>(null);
+  const { playClickSound } = useAudio();
   
   useEffect(() => {
     camera.position.set(0, 10, 25);
@@ -56,6 +59,12 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
     };
   }, [camera, scene]);
   
+  // Handle planet click with sound effect
+  const handlePlanetClick = (name: string) => {
+    playClickSound();
+    setActivePlanet(name);
+  };
+  
   // Animate stars rotation and sun effects
   useFrame((state) => {
     if (starsRef.current) {
@@ -80,6 +89,11 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
         1.2 + glowFactor,
         1.2 + glowFactor
       );
+    }
+    
+    // Animate sun flare rotation
+    if (sunFlareRef.current) {
+      sunFlareRef.current.rotation.z = state.clock.getElapsedTime() * 0.05;
     }
   });
 
@@ -112,7 +126,7 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
       </mesh>
       
       {/* Sun rays/flares effect */}
-      <mesh position={[0, 0, 0]} rotation-z={state => state.clock.getElapsedTime() * 0.05}>
+      <mesh ref={sunFlareRef} position={[0, 0, 0]}>
         <planeGeometry args={[15, 15]} />
         <meshBasicMaterial
           transparent
@@ -134,7 +148,7 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
           description={planet.description}
           facts={planet.facts}
           showInfo={activePlanet === planet.name}
-          onClick={() => setActivePlanet(planet.name)}
+          onClick={() => handlePlanetClick(planet.name)}
         />
       ))}
       

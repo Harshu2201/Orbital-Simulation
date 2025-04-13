@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StarBackground from '@/components/StarBackground';
 import Navbar from '@/components/Navbar';
 import SolarSystem from '@/components/SolarSystem';
@@ -8,22 +8,52 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Info, Settings, Maximize, Minimize } from 'lucide-react';
+import { useAudio } from '@/contexts/AudioContext';
+import { toast } from '@/components/ui/use-toast';
 
 const Simulation = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const { playClickSound, isPlaying: isAudioPlaying } = useAudio();
+
+  // Prompt for audio on page load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isAudioPlaying) {
+        toast({
+          title: "Enable Cosmic Sound",
+          description: "Click the speaker icon to enable space ambience and interactive sounds",
+          duration: 5000,
+        });
+      }
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [isAudioPlaying]);
 
   const toggleFullscreen = () => {
+    playClickSound();
+    
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch((e) => {
         console.error(`Error attempting to enable fullscreen: ${e.message}`);
       });
       setIsFullscreen(true);
+      
+      toast({
+        title: "Fullscreen Mode",
+        description: "Entering immersive view. Press ESC to exit.",
+        duration: 3000,
+      });
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
         setIsFullscreen(false);
       }
     }
+  };
+
+  const handleTabChange = (value: string) => {
+    playClickSound();
   };
 
   return (
@@ -56,7 +86,7 @@ const Simulation = () => {
             <AstrophysicsInfo className="mb-6" />
             
             <Card className="glass-card border-white/10 p-6">
-              <Tabs defaultValue="overview">
+              <Tabs defaultValue="overview" onValueChange={handleTabChange}>
                 <TabsList className="grid w-full grid-cols-3 mb-6 bg-black/20">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="controls">Controls</TabsTrigger>
@@ -84,6 +114,7 @@ const Simulation = () => {
                     <li><strong>Play/Pause:</strong> Start or stop the planetary rotation</li>
                     <li><strong>Speed Control:</strong> Adjust how fast the planets rotate</li>
                     <li><strong>Fullscreen:</strong> Expand the simulation to fill your screen</li>
+                    <li><strong>Audio Controls:</strong> Toggle space ambient music and UI sounds</li>
                   </ul>
                 </TabsContent>
                 
@@ -153,6 +184,7 @@ const Simulation = () => {
                   <li>Zoom with scroll wheel</li>
                   <li>Adjust rotation speed with slider</li>
                   <li>Toggle audio with sound button</li>
+                  <li>All buttons have interactive sounds</li>
                 </ul>
                 
                 <p className="mt-4 text-gray-400 italic">

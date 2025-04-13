@@ -24,9 +24,10 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
   increaseSpeed,
   decreaseSpeed
 }) => {
-  const { toggleAudio, isPlaying: isAudioPlaying, volume, setVolume } = useAudio();
+  const { toggleAudio, isPlaying: isAudioPlaying, volume, setVolume, playClickSound } = useAudio();
 
   const handleToggleAudio = () => {
+    playClickSound();
     toggleAudio();
     
     toast({
@@ -38,12 +39,36 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
     });
   };
 
+  const handleTogglePlay = () => {
+    playClickSound();
+    togglePlay();
+  };
+
+  const handleIncreaseSpeed = () => {
+    playClickSound();
+    increaseSpeed();
+  };
+
+  const handleDecreaseSpeed = () => {
+    playClickSound();
+    decreaseSpeed();
+  };
+
+  const handleSpeedChange = (value: number[]) => {
+    playClickSound();
+    adjustSpeed(value[0] / 100);
+  };
+
+  const handleVolumeChange = (value: number[]) => {
+    setVolume(value[0] / 100);
+  };
+
   return (
     <div className="glass-card py-3 px-6 rounded-lg mb-4 flex items-center gap-4">
       <Button
         variant="outline" 
         size="icon"
-        onClick={togglePlay}
+        onClick={handleTogglePlay}
         aria-label={isPlaying ? "Pause simulation" : "Play simulation"}
         className="text-white border-white/20 hover:bg-white/10"
       >
@@ -53,7 +78,7 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
       <Button
         variant="outline" 
         size="icon"
-        onClick={decreaseSpeed}
+        onClick={handleDecreaseSpeed}
         aria-label="Decrease speed"
         className="text-white border-white/20 hover:bg-white/10"
       >
@@ -66,7 +91,7 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
           min={25}
           max={300}
           step={25}
-          onValueChange={(value) => adjustSpeed(value[0] / 100)}
+          onValueChange={handleSpeedChange}
           aria-label="Simulation speed"
         />
       </div>
@@ -74,7 +99,7 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
       <Button
         variant="outline" 
         size="icon"
-        onClick={increaseSpeed}
+        onClick={handleIncreaseSpeed}
         aria-label="Increase speed"
         className="text-white border-white/20 hover:bg-white/10"
       >
@@ -103,7 +128,7 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
             min={0}
             max={100}
             step={10}
-            onValueChange={(value) => setVolume(value[0] / 100)}
+            onValueChange={handleVolumeChange}
             aria-label="Volume"
           />
         </div>
