@@ -23,6 +23,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [volume, setVolumeState] = useState(0.4);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [audioLoaded, setAudioLoaded] = useState(false);
+  const [audioAttempted, setAudioAttempted] = useState(false);
 
   useEffect(() => {
     // Create audio element
@@ -31,36 +32,49 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     audio.volume = volume;
     audio.preload = 'auto';
     
-    audio.addEventListener('canplaythrough', () => {
+    // Add a better error handling and logging
+    const handleCanPlayThrough = () => {
+      console.log('Audio loaded successfully and ready to play');
       setAudioLoaded(true);
-      console.log('Audio loaded and ready to play');
-    });
+    };
     
-    audio.addEventListener('error', (e) => {
+    const handleError = (e: Event) => {
       console.error('Error loading audio:', e);
-    });
+      // Try fallback audio if primary source fails
+      if (!audioAttempted) {
+        console.log('Attempting to load fallback audio...');
+        audio.src = '/ambient-space.mp3';
+        setAudioAttempted(true);
+      }
+    };
+    
+    audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    audio.addEventListener('error', handleError);
     
     audioRef.current = audio;
 
     // Cleanup on unmount
     return () => {
       if (audioRef.current) {
+        audioRef.current.removeEventListener('canplaythrough', handleCanPlayThrough);
+        audioRef.current.removeEventListener('error', handleError);
         audioRef.current.pause();
         audioRef.current.src = '';
         audioRef.current = null;
       }
     };
-  }, []);
+  }, [volume, audioAttempted]);
 
   const toggleAudio = () => {
-    if (!audioRef.current || !audioLoaded) {
-      console.log('Audio not ready yet');
+    if (!audioRef.current) {
+      console.log('Audio element not created yet');
       return;
     }
 
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
+      console.log('Audio paused');
     } else {
       // Some browsers require user interaction before playing audio
       const playPromise = audioRef.current.play();
@@ -68,9 +82,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         playPromise
           .then(() => {
             setIsPlaying(true);
+            console.log('Audio playing');
           })
           .catch(error => {
             console.error("Audio playback prevented by browser:", error);
+            // Add user-friendly notification that browser blocked autoplay
           });
       }
     }

@@ -16,30 +16,69 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
   const { camera, scene } = useThree();
   const starsRef = useRef<THREE.Points>(null);
   const sunRef = useRef<THREE.Mesh>(null);
+  const sunGlowRef = useRef<THREE.Mesh>(null);
+  const orbitLinesRef = useRef<THREE.Object3D>(null);
   
   useEffect(() => {
     camera.position.set(0, 10, 25);
     
-    // Add a subtle fog to the scene for depth
-    scene.fog = new THREE.FogExp2(0x000010, 0.005);
+    // Add a more atmospheric fog to the scene for depth
+    scene.fog = new THREE.FogExp2(0x000010, 0.003);
+    
+    // Create orbit lines for each planet
+    const orbitsGroup = new THREE.Group();
+    
+    PLANET_DATA.forEach(planet => {
+      const orbitGeometry = new THREE.RingGeometry(
+        Math.sqrt(planet.position[0]**2 + planet.position[2]**2) - 0.05,
+        Math.sqrt(planet.position[0]**2 + planet.position[2]**2) + 0.05,
+        128
+      );
+      const orbitMaterial = new THREE.MeshBasicMaterial({
+        color: 0x444466,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.15
+      });
+      const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+      orbit.rotation.x = Math.PI / 2;
+      orbitsGroup.add(orbit);
+    });
+    
+    scene.add(orbitsGroup);
+    orbitLinesRef.current = orbitsGroup;
     
     return () => {
       scene.fog = null;
+      if (orbitLinesRef.current) {
+        scene.remove(orbitLinesRef.current);
+      }
     };
   }, [camera, scene]);
   
-  // Animate stars rotation
+  // Animate stars rotation and sun effects
   useFrame((state) => {
     if (starsRef.current) {
       starsRef.current.rotation.y += 0.0001;
     }
     
-    // Animate sun glow
+    // Animate sun glow with more dynamic pulsing
     if (sunRef.current) {
+      const pulseFactor = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.03;
       sunRef.current.scale.set(
-        1 + Math.sin(state.clock.getElapsedTime() * 0.5) * 0.02,
-        1 + Math.sin(state.clock.getElapsedTime() * 0.5) * 0.02,
-        1 + Math.sin(state.clock.getElapsedTime() * 0.5) * 0.02
+        1 + pulseFactor,
+        1 + pulseFactor,
+        1 + pulseFactor
+      );
+    }
+    
+    // Animate sun corona/glow with different rhythm
+    if (sunGlowRef.current) {
+      const glowFactor = Math.sin(state.clock.getElapsedTime() * 0.3) * 0.1 + 0.9;
+      sunGlowRef.current.scale.set(
+        1.2 + glowFactor,
+        1.2 + glowFactor,
+        1.2 + glowFactor
       );
     }
   });
@@ -47,33 +86,51 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
   return (
     <>
       <ambientLight intensity={0.3} />
-      <pointLight position={[0, 0, 0]} intensity={2} color="#FDB813" />
+      <pointLight position={[0, 0, 0]} intensity={3} color="#FDB813" castShadow />
       
-      {/* Sun with pulsing effect */}
+      {/* Enhanced sun with more dynamic effects */}
       <mesh ref={sunRef} position={[0, 0, 0]}>
-        <sphereGeometry args={[2.5, 32, 32]} />
-        <meshBasicMaterial color="#FDB813" />
+        <sphereGeometry args={[2.5, 64, 64]} />
+        <meshBasicMaterial color="#FDB813">
+          <gradientTexture 
+            stops={[0, 0.5, 1]} 
+            colors={['#FFCF33', '#FDB813', '#FF8700']} 
+          />
+        </meshBasicMaterial>
         <Html position={[0, 3, 0]} distanceFactor={10}>
           <div className="bg-black/50 backdrop-blur-sm p-1 rounded whitespace-nowrap">
-            <span className="text-yellow-400 font-bold text-sm">The Sun</span>
+            <span className="text-yellow-400 font-bold text-sm animate-pulse">The Sun</span>
           </div>
         </Html>
-        
-        {/* Sun glow effect */}
-        <mesh>
-          <sphereGeometry args={[2.7, 32, 32]} />
-          <meshBasicMaterial color="#FDB813" transparent opacity={0.2} />
-        </mesh>
       </mesh>
       
-      {/* Sun corona effect */}
+      {/* Sun inner glow effect */}
       <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[3, 32, 32]} />
+        <sphereGeometry args={[2.7, 64, 64]} />
+        <meshBasicMaterial color="#FFCF33" transparent opacity={0.3} />
+      </mesh>
+      
+      {/* Sun outer corona/glow effect with animation */}
+      <mesh ref={sunGlowRef} position={[0, 0, 0]}>
+        <sphereGeometry args={[3.2, 64, 64]} />
         <meshBasicMaterial
-          color="#FDB813"
+          color="#FFA500"
           transparent
-          opacity={0.05}
+          opacity={0.1}
           side={THREE.BackSide}
+        />
+      </mesh>
+      
+      {/* Sun rays/flares effect */}
+      <mesh position={[0, 0, 0]} rotation={[0, 0, state => state.clock.getElapsedTime() * 0.05]}>
+        <planeGeometry args={[15, 15]} />
+        <meshBasicMaterial
+          transparent
+          opacity={0.08}
+          side={THREE.DoubleSide}
+          map={new THREE.TextureLoader().load('/starflare.png')}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
         />
       </mesh>
       
@@ -100,14 +157,15 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
         rotateSpeed={0.5}
         minDistance={5}
         maxDistance={50}
+        maxPolarAngle={Math.PI * 0.85}
       />
       
       <Stars
         ref={starsRef}
         radius={100}
         depth={50}
-        count={7000}
-        factor={4}
+        count={10000}
+        factor={5}
         fade
         speed={0.5}
       />

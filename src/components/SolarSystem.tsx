@@ -6,26 +6,33 @@ import PlanetControls from './PlanetControls';
 import PlanetNavigator from './PlanetNavigator';
 import PlanetDetail from './PlanetDetail';
 import { useAudio } from '@/contexts/AudioContext';
-import { Toast } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 
 const SolarSystem: React.FC = () => {
   const [speed, setSpeed] = useState(1);
   const [isPlaying, setIsPlaying] = useState(true);
   const [activePlanet, setActivePlanet] = useState<string | null>(null);
-  const { toggleAudio } = useAudio();
+  const { toggleAudio, isPlaying: isAudioPlaying } = useAudio();
   
-  // Auto-start audio when simulation loads
+  // Show welcome toast and prompt for audio when simulation loads
   useEffect(() => {
     // Show welcome toast
     toast({
       title: "Welcome to Solar System Simulation",
-      description: "Click the sound icon to toggle ambient space music",
+      description: "Click the sound icon to toggle ambient space music for an immersive experience",
       duration: 5000,
     });
     
-    // We don't auto-start audio anymore due to browser restrictions
-    // User must click the audio button themselves
+    // Prompt user about the audio after a short delay
+    const audioPromptTimer = setTimeout(() => {
+      toast({
+        title: "Enable Space Ambience",
+        description: "Click the speaker icon in the controls to enable the cosmic soundtrack",
+        duration: 8000,
+      });
+    }, 10000);
+    
+    return () => clearTimeout(audioPromptTimer);
   }, []);
 
   const togglePlay = () => {

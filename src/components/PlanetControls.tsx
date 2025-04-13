@@ -2,9 +2,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Play, Pause, FastForward, Rewind } from 'lucide-react';
+import { Play, Pause, FastForward, Rewind, Volume2, VolumeX } from 'lucide-react';
 import { useAudio } from '@/contexts/AudioContext';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/use-toast';
 
 interface PlanetControlsProps {
   speed: number;
@@ -23,7 +24,19 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
   increaseSpeed,
   decreaseSpeed
 }) => {
-  const { toggleAudio, isPlaying: isAudioPlaying } = useAudio();
+  const { toggleAudio, isPlaying: isAudioPlaying, volume, setVolume } = useAudio();
+
+  const handleToggleAudio = () => {
+    toggleAudio();
+    
+    toast({
+      title: isAudioPlaying ? "Audio Off" : "Audio On",
+      description: isAudioPlaying 
+        ? "Space ambient sound has been turned off" 
+        : "Space ambient sound is now playing",
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="glass-card py-3 px-6 rounded-lg mb-4 flex items-center gap-4">
@@ -73,24 +86,28 @@ const PlanetControls: React.FC<PlanetControlsProps> = ({
       <Button
         variant="outline"
         size="icon"
-        onClick={toggleAudio}
+        onClick={handleToggleAudio}
         aria-label={isAudioPlaying ? "Mute audio" : "Play audio"}
-        className="text-white border-white/20 hover:bg-white/10 ml-2"
-      >
-        {isAudioPlaying ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-            <line x1="23" y1="9" x2="17" y2="15" />
-            <line x1="17" y1="9" x2="23" y2="15" />
-          </svg>
+        className={cn(
+          "text-white border-white/20 hover:bg-white/10 ml-2",
+          isAudioPlaying && "text-cosmic-glow"
         )}
+      >
+        {isAudioPlaying ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
       </Button>
+      
+      {isAudioPlaying && (
+        <div className="w-24 px-2">
+          <Slider
+            value={[volume * 100]}
+            min={0}
+            max={100}
+            step={10}
+            onValueChange={(value) => setVolume(value[0] / 100)}
+            aria-label="Volume"
+          />
+        </div>
+      )}
     </div>
   );
 };
