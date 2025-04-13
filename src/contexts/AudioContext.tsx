@@ -20,40 +20,60 @@ export const useAudio = () => {
 
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolumeState] = useState(0.5);
+  const [volume, setVolumeState] = useState(0.4);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioLoaded, setAudioLoaded] = useState(false);
 
   useEffect(() => {
     // Create audio element
-    const audio = new Audio('/ambient-space.mp3');
+    const audio = new Audio('/space-cinematic-epic.mp3');
     audio.loop = true;
     audio.volume = volume;
+    audio.preload = 'auto';
+    
+    audio.addEventListener('canplaythrough', () => {
+      setAudioLoaded(true);
+      console.log('Audio loaded and ready to play');
+    });
+    
+    audio.addEventListener('error', (e) => {
+      console.error('Error loading audio:', e);
+    });
+    
     audioRef.current = audio;
 
     // Cleanup on unmount
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current.src = '';
         audioRef.current = null;
       }
     };
   }, []);
 
   const toggleAudio = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !audioLoaded) {
+      console.log('Audio not ready yet');
+      return;
+    }
 
     if (isPlaying) {
       audioRef.current.pause();
+      setIsPlaying(false);
     } else {
       // Some browsers require user interaction before playing audio
       const playPromise = audioRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.error("Audio playback prevented by browser:", error);
-        });
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(error => {
+            console.error("Audio playback prevented by browser:", error);
+          });
       }
     }
-    setIsPlaying(!isPlaying);
   };
 
   const setVolume = (newVolume: number) => {

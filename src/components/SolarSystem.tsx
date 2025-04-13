@@ -1,15 +1,32 @@
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import SceneSetup from './SceneSetup';
 import PlanetControls from './PlanetControls';
 import PlanetNavigator from './PlanetNavigator';
 import PlanetDetail from './PlanetDetail';
+import { useAudio } from '@/contexts/AudioContext';
+import { Toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/use-toast";
 
 const SolarSystem: React.FC = () => {
   const [speed, setSpeed] = useState(1);
   const [isPlaying, setIsPlaying] = useState(true);
   const [activePlanet, setActivePlanet] = useState<string | null>(null);
+  const { toggleAudio } = useAudio();
+  
+  // Auto-start audio when simulation loads
+  useEffect(() => {
+    // Show welcome toast
+    toast({
+      title: "Welcome to Solar System Simulation",
+      description: "Click the sound icon to toggle ambient space music",
+      duration: 5000,
+    });
+    
+    // We don't auto-start audio anymore due to browser restrictions
+    // User must click the audio button themselves
+  }, []);
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
@@ -22,6 +39,11 @@ const SolarSystem: React.FC = () => {
 
   const adjustSpeed = (newSpeed: number) => {
     setSpeed(newSpeed);
+    if (newSpeed > 0 && !isPlaying) {
+      setIsPlaying(true);
+    } else if (newSpeed === 0 && isPlaying) {
+      setIsPlaying(false);
+    }
   };
 
   const increaseSpeed = () => {
@@ -56,7 +78,12 @@ const SolarSystem: React.FC = () => {
 
       <div className="flex-1 relative">
         <div className="absolute inset-0 z-10">
-          <Suspense fallback={<div className="flex h-full items-center justify-center">Loading 3D models...</div>}>
+          <Suspense fallback={
+            <div className="flex h-full items-center justify-center">
+              <div className="text-cosmic-glow text-lg">Loading 3D models...</div>
+              <div className="mt-4 animate-spin w-8 h-8 border-4 border-cosmic-glow border-t-transparent rounded-full"></div>
+            </div>
+          }>
             <Canvas dpr={[1, 2]} shadows>
               <SceneSetup 
                 activePlanet={activePlanet} 
