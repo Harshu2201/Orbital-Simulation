@@ -91,17 +91,7 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
       {/* Enhanced sun with more dynamic effects */}
       <mesh ref={sunRef} position={[0, 0, 0]}>
         <sphereGeometry args={[2.5, 64, 64]} />
-        <meshBasicMaterial color="#FDB813">
-          <gradientTexture 
-            stops={[0, 0.5, 1]} 
-            colors={['#FFCF33', '#FDB813', '#FF8700']} 
-          />
-        </meshBasicMaterial>
-        <Html position={[0, 3, 0]} distanceFactor={10}>
-          <div className="bg-black/50 backdrop-blur-sm p-1 rounded whitespace-nowrap">
-            <span className="text-yellow-400 font-bold text-sm animate-pulse">The Sun</span>
-          </div>
-        </Html>
+        <meshBasicMaterial color="#FDB813" />
       </mesh>
       
       {/* Sun inner glow effect */}
@@ -122,7 +112,7 @@ const SceneSetup: React.FC<SceneSetupProps> = ({ activePlanet, setActivePlanet, 
       </mesh>
       
       {/* Sun rays/flares effect */}
-      <mesh position={[0, 0, 0]} rotation={[0, 0, state => state.clock.getElapsedTime() * 0.05]}>
+      <mesh position={[0, 0, 0]} rotation-z={state => state.clock.getElapsedTime() * 0.05}>
         <planeGeometry args={[15, 15]} />
         <meshBasicMaterial
           transparent

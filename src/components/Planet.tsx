@@ -97,17 +97,17 @@ const Planet: React.FC<PlanetProps> = ({
   // Get the appropriate glow color based on planet
   const getGlowColor = (planetName: string) => {
     const glowMap: Record<string, string> = {
-      Mercury: '#A9A9A950',
-      Venus: '#F0E68C50',
-      Earth: '#87CEEB50',
-      Mars: '#CD533650',
-      Jupiter: '#E0A56850',
-      Saturn: '#DAA06D50',
-      Uranus: '#B0E0E650',
-      Neptune: '#4169E150',
-      Pluto: '#9C8A7D50',
+      Mercury: '#A9A9A9',
+      Venus: '#F0E68C',
+      Earth: '#87CEEB',
+      Mars: '#CD5336',
+      Jupiter: '#E0A568',
+      Saturn: '#DAA06D',
+      Uranus: '#B0E0E6',
+      Neptune: '#4169E1',
+      Pluto: '#9C8A7D',
     };
-    return glowMap[planetName] || planetColor + '50';
+    return glowMap[planetName] || planetColor;
   };
   
   // Animate the planet rotation and glow
